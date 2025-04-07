@@ -1,13 +1,22 @@
 import requests
 import json
-
+import os
 from dotenv import load_dotenv
 
+# Load environment variables from a .env file
 load_dotenv()
 
-ACCESS_TOKEN="..."
-API_URL = "..."
-COURSE_ID = "..."  # Replace with your course ID
+ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
+API_URL = os.getenv("API_URL")
+COURSE_ID = os.getenv("COURSE_ID")
+
+# Basic checks to ensure everything is loaded
+if not ACCESS_TOKEN:
+    raise ValueError("Missing ACCESS_TOKEN! Check your .env file.")
+if not API_URL:
+    raise ValueError("Missing API_URL! Check your .env file.")
+if not COURSE_ID:
+    raise ValueError("Missing COURSE_ID! Check your .env file.")
 
 headers = {
     "Authorization": f"Bearer {ACCESS_TOKEN}",
@@ -15,54 +24,23 @@ headers = {
 }
 
 # Define the query with pagination for assignmentsConnection
-query = """
-{
-  course(id: ...) {
-    id
-    name
-    assignmentsConnection {
-      nodes {
-        name
-        _id
-        submissionsConnection {
-          nodes {
-            grade
-            user {
-              email
-            }
-            rubricAssessmentsConnection {
-              nodes {
-                assessmentRatings {
-                  comments
-                  description
-                  points
-                  criterion {
-                    longDescription
-                    points
-                    description
-                  }
-                }
-              }
-              pageInfo {
-                hasNextPage
-                endCursor
-              }
-            }
-          }
-          pageInfo {
-            endCursor
-            hasNextPage
-          }
-        }
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
-    }
-  }
-}
-"""
+# Get the directory where the script is located
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Path to the .graphql file relative to the script
+query_file_path = os.path.join(script_dir, "rubric-results-paged.graphql")
+
+print (query_file_path)
+
+# Load and substitute the course ID into the query
+with open(query_file_path, 'r') as f:
+    raw_query = f.read()
+
+print (raw_query)
+
+query = raw_query.replace("COURSE_ID", COURSE_ID)
+
+print(query)
 
 def fetch_all_data():
     # Use a dictionary to store the data directly under 'course' instead of an array

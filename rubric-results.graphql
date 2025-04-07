@@ -1,0 +1,34 @@
+{
+  course(id: COURSE_ID) {
+    id
+    name
+    assignmentsConnection {
+      nodes {
+        name
+        _id
+        submissionsConnection {
+          nodes {
+            grade
+            user {
+              email
+            }
+            rubricAssessmentsConnection {
+              nodes {
+                assessmentRatings {
+                  comments
+                  description
+                  points
+                  criterion {
+                    longDescription
+                    points
+                    description
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

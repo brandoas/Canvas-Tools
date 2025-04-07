@@ -1,14 +1,26 @@
 import requests
 import json
+import os
+from dotenv import load_dotenv
 
+# Load environment variables from a .env file
+load_dotenv()
 
-ACCESS_TOKEN = "..."
-COURSE_ID = "..."  # Replace with your course ID
-API_URL = "..."
+ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
+API_URL = os.getenv("API_URL")
+COURSE_ID = os.getenv("COURSE_ID")
 
-query = """
+# Basic checks to ensure everything is loaded
+if not ACCESS_TOKEN:
+    raise ValueError("Missing ACCESS_TOKEN! Check your .env file.")
+if not API_URL:
+    raise ValueError("Missing API_URL! Check your .env file.")
+if not COURSE_ID:
+    raise ValueError("Missing COURSE_ID! Check your .env file.")
+
+query_template = """
 {
-  course(id: ...) {
+  course(id: {course_id}) {
     id
     name
     assignmentsConnection {
@@ -43,12 +55,12 @@ query = """
 }
 """
 
+query = query_template.format(course_id=COURSE_ID)
+
 headers = {
     "Authorization": f"Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json"
 }
-
-
 
 # Make the request
 response = requests.post(API_URL, json={'query': query}, headers=headers)
