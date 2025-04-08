@@ -8,16 +8,20 @@ load_dotenv()
 
 ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 API_URL = os.getenv("API_URL")
-COURSE_ID = os.getenv("COURSE_ID")
 
 # Basic checks to ensure everything is loaded
 if not ACCESS_TOKEN:
     raise ValueError("Missing ACCESS_TOKEN! Check your .env file.")
 if not API_URL:
     raise ValueError("Missing API_URL! Check your .env file.")
-if not COURSE_ID:
-    raise ValueError("Missing COURSE_ID! Check your .env file.")
 
+#Prompt for class number to select below
+try:
+    COURSE_ID = input("Enter the Canvas course number to query data for: ").strip()
+except ValueError:
+    print("Invalid input. Please enter a numeric class number.")
+    exit(1)
+        
 headers = {
     "Authorization": f"Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json"

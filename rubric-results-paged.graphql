@@ -30,6 +30,18 @@
                 endCursor
               }
             }
+            commentsConnection {
+              nodes {
+                comment
+                author {
+                  email
+                }
+              }
+              pageInfo {
+                endCursor
+                hasNextPage
+              }
+            }
           }
           pageInfo {
             endCursor
